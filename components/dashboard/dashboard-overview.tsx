@@ -102,8 +102,12 @@ export function DashboardOverview() {
     : 0
 
   // Cálculo do comparativo entre VGV Final Projetado Líquido e Meta de VGV Líquido
-  const comparativoMetaVGV =
-    metaVGVLiquido && metaVGVLiquido > 0 ? ((vgvFinalProjetadoLiquido - metaVGVLiquido) / metaVGVLiquido) * 100 : 0
+  const metaVGVLiquidoCalculado =
+    empreendimentoData?.vgv_bruto_alvo && empreendimentoData?.percentual_permuta
+      ? empreendimentoData.vgv_bruto_alvo * (1 - empreendimentoData.percentual_permuta / 100)
+      : empreendimentoData?.vgv_liquido_alvo || 0
+
+  const comparativoMetaVGV = vgvFinalProjetadoLiquido - metaVGVLiquidoCalculado
 
   // Função para exportar o dashboard para PDF
   const exportDashboardToPDF = () => {
@@ -469,7 +473,11 @@ export function DashboardOverview() {
                   <Skeleton className="h-8 w-32 bg-gray-700" />
                 ) : (
                   <div className="text-2xl font-bold text-white currency">
-                    {formatCurrency(empreendimentoData?.vgv_liquido_alvo)}
+                    {formatCurrency(
+                      empreendimentoData?.vgv_bruto_alvo && empreendimentoData?.percentual_permuta
+                        ? empreendimentoData.vgv_bruto_alvo * (1 - empreendimentoData.percentual_permuta / 100)
+                        : empreendimentoData?.vgv_liquido_alvo || 0,
+                    )}
                   </div>
                 )}
                 <p className="text-xs text-gray-400 mt-1">
@@ -533,21 +541,21 @@ export function DashboardOverview() {
                     {comparativoMetaVGV >= 0 ? (
                       <>
                         <span className="text-green-500 flex items-center">
-                          +{formatPercentage3Decimals(comparativoMetaVGV)}
+                          +{formatCurrency(comparativoMetaVGV)}
                           <ArrowUp className="h-5 w-5 ml-1 text-green-500" />
                         </span>
                       </>
                     ) : (
                       <>
                         <span className="text-red-500 flex items-center">
-                          {formatPercentage3Decimals(comparativoMetaVGV)}
+                          {formatCurrency(comparativoMetaVGV)}
                           <ArrowDown className="h-5 w-5 ml-1 text-red-500" />
                         </span>
                       </>
                     )}
                   </div>
                 )}
-                <p className="text-xs text-gray-400 mt-1">VGV Final Líquido vs Meta</p>
+                <p className="text-xs text-gray-400 mt-1">Diferença: VGV Final Líquido - Meta</p>
               </CardContent>
             </Card>
           </div>
