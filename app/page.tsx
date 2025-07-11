@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { Building2 } from "lucide-react"
+import { Building2, BarChart3 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { DashboardOverview } from "@/components/dashboard/dashboard-overview"
 
@@ -20,6 +20,12 @@ export default function Home() {
               <Link href="/empreendimentos" className="flex items-center gap-2">
                 <Building2 className="h-4 w-4" />
                 Empreendimentos
+              </Link>
+            </Button>
+            <Button asChild variant="outline">
+              <Link href="/comparativo-cenarios" className="flex items-center gap-2">
+                <BarChart3 className="h-4 w-4" />
+                Comparativo
               </Link>
             </Button>
           </div>

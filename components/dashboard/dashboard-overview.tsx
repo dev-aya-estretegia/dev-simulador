@@ -28,11 +28,13 @@ import { DetalhamentoCalculoTable } from "./detalhamento-calculo-table"
 import { Button } from "@/components/ui/button"
 import { jsPDF } from "jspdf"
 import autoTable from "jspdf-autotable"
+import { EvolucaoPrecosCards } from "./evolucao-precos-cards"
+import { LineChartIcon } from "lucide-react"
 
 export function DashboardOverview() {
   const {
-    empreendimentos,
-    cenarios,
+    empreendimentos = [],
+    cenarios = [],
     selectedEmpreendimento,
     selectedCenario,
     dashboardData,
@@ -45,15 +47,15 @@ export function DashboardOverview() {
   } = useDashboardCenario()
 
   const {
-    valoresUnidades,
-    fases,
+    valoresUnidades = [],
+    fases = [],
     loading: loadingValores,
     error: errorValores,
   } = useValoresUnidades(selectedEmpreendimento, selectedCenario)
 
   // CORREÇÃO: Usar ambos os IDs para filtragem mais precisa
   const {
-    detalhamentos,
+    detalhamentos = [],
     loading: loadingDetalhamento,
     error: errorDetalhamento,
   } = useDetalhamentoCalculo(selectedEmpreendimento, selectedCenario)
@@ -216,7 +218,7 @@ export function DashboardOverview() {
     yPos += 8
 
     // Tabela de VGV por Tipologia
-    if (charts.vgvPorTipologia.length > 0) {
+    if (charts?.vgvPorTipologia && charts.vgvPorTipologia.length > 0) {
       const vgvTipologiaData = charts.vgvPorTipologia.map((item) => [
         item.name || "Sem nome",
         formatCurrency(item.value),
@@ -269,7 +271,7 @@ export function DashboardOverview() {
     yPos += 8
 
     // Tabela de VGV por Fase
-    if (charts.vgvPorFase.length > 0) {
+    if (charts?.vgvPorFase && charts.vgvPorFase.length > 0) {
       const vgvFaseData = charts.vgvPorFase.map((item) => [
         item.name || "Sem nome",
         formatCurrency(item.vgv),
@@ -324,7 +326,7 @@ export function DashboardOverview() {
     yPos += 8
 
     // Tabela de Valor Médio/m² por Tipologia
-    if (charts.valoresMediosPorTipologia.length > 0) {
+    if (charts?.valoresMediosPorTipologia && charts.valoresMediosPorTipologia.length > 0) {
       const valoresMediosData = charts.valoresMediosPorTipologia.map((item) => [
         item.name || "Sem nome",
         formatCurrency(item.valor),
@@ -421,7 +423,7 @@ export function DashboardOverview() {
 
       {/* Tabs para alternar entre visões */}
       <Tabs defaultValue="dashboard-geral" className="w-full">
-        <TabsList className="bg-gray-800 border-gray-700 mb-6">
+        <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 bg-gray-800 border-gray-700 mb-6">
           <TabsTrigger
             value="dashboard-geral"
             className="data-[state=active]:bg-gray-700 data-[state=active]:text-white text-gray-400"
@@ -442,6 +444,13 @@ export function DashboardOverview() {
           >
             <Calculator className="h-4 w-4 mr-2" />
             Detalhamento Cálculo
+          </TabsTrigger>
+          <TabsTrigger
+            value="evolucao-precos"
+            className="data-[state=active]:bg-gray-700 data-[state=active]:text-white text-gray-400"
+          >
+            <LineChartIcon className="h-4 w-4 mr-2" />
+            Evolução de Preços
           </TabsTrigger>
         </TabsList>
 
@@ -574,7 +583,7 @@ export function DashboardOverview() {
               <CardContent>
                 {loading ? (
                   <Skeleton className="h-[250px] w-full bg-gray-700" />
-                ) : charts.vgvPorTipologia.length > 0 ? (
+                ) : charts?.vgvPorTipologia && charts.vgvPorTipologia.length > 0 ? (
                   <PieChart
                     data={charts.vgvPorTipologia}
                     height={250}
@@ -601,7 +610,7 @@ export function DashboardOverview() {
               <CardContent>
                 {loading ? (
                   <Skeleton className="h-[250px] w-full bg-gray-700" />
-                ) : charts.vgvPorFase.length > 0 ? (
+                ) : charts?.vgvPorFase && charts.vgvPorFase.length > 0 ? (
                   <BarChart
                     data={charts.vgvPorFase.map((item) => ({
                       name: item.name,
@@ -638,7 +647,7 @@ export function DashboardOverview() {
               <CardContent>
                 {loading ? (
                   <Skeleton className="h-[250px] w-full bg-gray-700" />
-                ) : charts.unidadesPorFase.length > 0 ? (
+                ) : charts?.unidadesPorFase && charts.unidadesPorFase.length > 0 ? (
                   <BarChart
                     data={charts.unidadesPorFase.map((item) => ({
                       name: item.name,
@@ -668,7 +677,7 @@ export function DashboardOverview() {
               <CardContent>
                 {loading ? (
                   <Skeleton className="h-[250px] w-full bg-gray-700" />
-                ) : charts.valoresMediosPorTipologia.length > 0 ? (
+                ) : charts?.valoresMediosPorTipologia && charts.valoresMediosPorTipologia.length > 0 ? (
                   <BarChart
                     data={charts.valoresMediosPorTipologia.map((item) => ({
                       name: item.name,
@@ -712,6 +721,11 @@ export function DashboardOverview() {
             loading={loadingDetalhamento}
             error={errorDetalhamento}
           />
+        </TabsContent>
+
+        {/* Conteúdo da Tab Evolução de Preços */}
+        <TabsContent value="evolucao-precos">
+          <EvolucaoPrecosCards valoresUnidades={valoresUnidades} fases={fases} loading={loadingValores} />
         </TabsContent>
       </Tabs>
     </div>

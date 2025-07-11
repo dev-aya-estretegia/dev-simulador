@@ -73,6 +73,7 @@ export function ValoresUnidadesTable({
   const [fasesVendaFilter, setFasesVendaFilter] = useState<string[]>([])
   const [openFasesPopover, setOpenFasesPopover] = useState(false)
   const tableRef = useRef<HTMLDivElement>(null)
+  const [terminacaoFilter, setTerminacaoFilter] = useState<string>("todas")
 
   // Garantir que valoresUnidades seja sempre um array
   const safeValoresUnidades = Array.isArray(valoresUnidades) ? valoresUnidades : []
@@ -81,6 +82,24 @@ export function ValoresUnidadesTable({
   // Extrair opções únicas para filtros
   const tipologias = ["todas", ...new Set(safeValoresUnidades.map((u) => u.tipologia || ""))]
   const blocos = ["todos", ...new Set(safeValoresUnidades.map((u) => u.bloco).filter(Boolean) as string[])]
+
+  // Função para extrair os dois últimos números do nome da unidade
+  const extrairTerminacao = (nomeUnidade: string): string | null => {
+    // Buscar por números no final do nome
+    const match = nomeUnidade.match(/(\d{2,})$/)
+    if (match) {
+      const numeros = match[1]
+      // Pegar os dois últimos dígitos
+      return numeros.slice(-2)
+    }
+    return null
+  }
+
+  // Extrair terminações únicas para filtros
+  const terminacoes = [
+    "todas",
+    ...new Set(safeValoresUnidades.map((u) => extrairTerminacao(u.unidade_nome)).filter(Boolean) as string[]),
+  ].sort()
 
   // Extrair opções únicas para o filtro de fase de venda e ordenar
   const fasesVendaOptions = Array.from(
@@ -120,12 +139,16 @@ export function ValoresUnidadesTable({
     const matchesTipologia = tipologiaFilter === "todas" || unidade.tipologia === tipologiaFilter
     const matchesBloco = blocoFilter === "todos" || unidade.bloco === blocoFilter
 
+    // Novo filtro de terminação
+    const matchesTerminacao =
+      terminacaoFilter === "todas" || extrairTerminacao(unidade.unidade_nome) === terminacaoFilter
+
     // Verifica se a fase da unidade está no array de fases selecionadas ou se nenhuma fase está selecionada
     const matchesFaseVenda =
       fasesVendaFilter.length === 0 ||
       (unidade.fase_unidade_venda && fasesVendaFilter.includes(unidade.fase_unidade_venda))
 
-    return matchesSearch && matchesTipologia && matchesBloco && matchesFaseVenda
+    return matchesSearch && matchesTipologia && matchesBloco && matchesTerminacao && matchesFaseVenda
   })
 
   // Formatar valor para exibição
@@ -594,6 +617,19 @@ export function ValoresUnidadesTable({
             </SelectContent>
           </Select>
 
+          <Select value={terminacaoFilter} onValueChange={setTerminacaoFilter}>
+            <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
+              <SelectValue placeholder="Filtrar por terminação" />
+            </SelectTrigger>
+            <SelectContent className="bg-gray-700 border-gray-600">
+              {terminacoes.map((terminacao) => (
+                <SelectItem key={terminacao} value={terminacao} className="text-white hover:bg-gray-600">
+                  {terminacao === "todas" ? "Todas as terminações" : `${terminacao}`}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
           {/* Filtro de múltiplas fases de venda */}
           <Popover open={openFasesPopover} onOpenChange={setOpenFasesPopover}>
             <PopoverTrigger asChild>
@@ -850,6 +886,7 @@ export function ValoresUnidadesTable({
               {searchTerm && ` (filtro: "${searchTerm}")`}
               {tipologiaFilter !== "todas" && ` (tipologia: "${tipologiaFilter}")`}
               {blocoFilter !== "todos" && ` (bloco: "${blocoFilter}")`}
+              {terminacaoFilter !== "todas" && ` (terminação: ${terminacaoFilter})`}
               {fasesVendaFilter.length > 0 && ` (fases: ${fasesVendaFilter.join(", ")})`}
             </p>
           )}

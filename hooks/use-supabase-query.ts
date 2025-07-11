@@ -1,21 +1,20 @@
 "use client"
 
-import { useQuery, type UseQueryOptions, type QueryKey } from "@tanstack/react-query"
+import { useQuery, type UseQueryOptions } from "@tanstack/react-query"
+import { useSupabase } from "./use-supabase"
+import type { SupabaseClient } from "@supabase/supabase-js"
 
-/**
- * A custom hook to wrap @tanstack/react-query's useQuery for Supabase calls.
- * @param queryKey The key for the query.
- * @param queryFn A function that returns a promise resolving to the data. It should throw on error.
- * @param options React Query options.
- */
-export function useSupabaseQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData>(
-  queryKey: QueryKey,
-  queryFn: () => Promise<TQueryFnData>,
-  options?: Omit<UseQueryOptions<TQueryFnData, TError, TData>, "queryKey" | "queryFn">,
-) {
-  return useQuery<TQueryFnData, TError, TData>({
-    queryKey,
-    queryFn,
+type SupabaseQueryFn<T> = (supabase: SupabaseClient) => Promise<T>
+
+interface UseSupabaseQueryOptions<T> extends Omit<UseQueryOptions<T>, "queryFn"> {
+  queryFn: SupabaseQueryFn<T>
+}
+
+export function useSupabaseQuery<T>(options: UseSupabaseQueryOptions<T>) {
+  const { supabase } = useSupabase()
+
+  return useQuery({
     ...options,
+    queryFn: () => options.queryFn(supabase),
   })
 }

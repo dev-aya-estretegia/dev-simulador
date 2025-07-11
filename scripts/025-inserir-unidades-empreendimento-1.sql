@@ -51,7 +51,7 @@ INSERT INTO unidade (
 (1, 'Unidade 213', 'Studio', 29.4, NULL, 2, 'A', 'Sul', NULL, NULL, 0, 0, 0, 0, 0),
 (1, 'Unidade 214', 'Studio', 29.24, NULL, 2, 'A', 'Noroeste', NULL, NULL, 0, 0, 0, 0, 0),
 (1, 'Unidade 215', 'Apartamento', 68.4, NULL, 2, 'A', 'Sudoeste', NULL, NULL, 1, 0, 0, 1, 1),
-(1, 'Unidade 216', 'Apartamento', 39.11, 17.74, 2, 'A', 'Noroeste', NULL, NULL, 0, 0, 0, 0, 1),
+(1, 'Unidade 216', 'Studio', 39.11, 17.74, 2, 'A', 'Noroeste', NULL, NULL, 0, 0, 0, 0, 1),
 
 -- Pavimento 3
 (1, 'Unidade 301', 'Apartamento', 72.34, NULL, 3, 'A', 'Norte', NULL, NULL, 1, 0, 0, 1, 1),
