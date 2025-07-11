@@ -19,7 +19,7 @@ import { Loader2, Save, ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import type { Empreendimento } from "@/types/database"
 
-// Atualizando o schema para corresponder à estrutura real do banco de dados
+// Schema de validação usando Zod v3 syntax
 const empreendimentoSchema = z.object({
   nome: z.string().min(3, "O nome deve ter pelo menos 3 caracteres"),
   descricao: z.string().min(10, "A descrição deve ter pelo menos 10 caracteres"),
@@ -81,7 +81,7 @@ export function EmpreendimentoForm({ empreendimento }: EmpreendimentoFormProps) 
       // Calculando o VGV líquido automaticamente
       const vgvLiquido = calcularVgvLiquido(values.vgv_bruto_alvo, values.percentual_permuta)
 
-      // Adicionando o valor calculado aos dados a serem enviados
+      // Preparando os dados para envio
       const dadosParaEnviar = {
         ...values,
         vgv_liquido_alvo: vgvLiquido,
@@ -114,11 +114,11 @@ export function EmpreendimentoForm({ empreendimento }: EmpreendimentoFormProps) 
       // Redirecionar para a lista de empreendimentos
       router.push("/empreendimentos")
       router.refresh()
-    } catch (error) {
+    } catch (error: any) {
       console.error("Erro ao salvar empreendimento:", error)
       toast({
         title: "Erro ao salvar",
-        description: `Ocorreu um erro ao salvar o empreendimento: ${error.message}`,
+        description: `Ocorreu um erro ao salvar o empreendimento: ${error?.message || "Erro desconhecido"}`,
         variant: "destructive",
       })
     } finally {
