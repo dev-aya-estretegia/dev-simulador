@@ -1,0 +1,4 @@
+nome,descricao,empresa,endereco,cidade,estado,data_lancamento,vgv_bruto_alvo,percentual_permuta
+"Residencial Jardim das Flores","Empreendimento residencial de alto padrão com 120 unidades, localizado em área nobre da cidade","Construtora ABC Ltda","Rua das Flores, 1000 - Jardim Botânico","São Paulo","SP","2024-06-15",25000000.00,15.00
+"Edifício Comercial Central","Complexo comercial moderno com salas de diversos tamanhos no centro da cidade","Incorporadora XYZ S.A.","Avenida Paulista, 2500 - Bela Vista","São Paulo","SP","2024-09-01",18000000.00,20.00
+"Condomínio Vista Mar","Residencial com vista para o mar, 80 apartamentos de 2 e 3 dormitórios","Construtora Oceano","Rua Beira Mar, 500 - Copacabana","Rio de Janeiro","RJ","2024-12-01",35000000.00,10.00
